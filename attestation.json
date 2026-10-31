@@ -1,9 +1,0 @@
-{
-  "pluginId": "neobase.journal",
-  "repo": "NDesumeur/neobase-plugin-journal",
-  "version": "1.0.0",
-  "sha256": "44c3ab6b3fffb12032810753936f7ea069c88aba1f1b41a15464d1d4c13c5833",
-  "approvedAt": "2026-10-31T16:39:32.106Z",
-  "neobase": ">=4.0.0",
-  "signature": "Fi3F8pHMG9toN/lLssT8yIwVwWZany88vfzqb44CQgWS2bgvXVFawyQpOx2ve89mgxwP5JrInPcpvsJVk3nGAw=="
-}

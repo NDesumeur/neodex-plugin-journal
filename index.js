@@ -2,11 +2,34 @@
 // Ses données sont dans le dossier du plugin, que NeoBase sauvegarde (synchro cloud et sauvegardes) ; à la première ouverture elle reprend ce que tu avais dans NeoBase.
 // Elle demande l'accès complet pour utiliser les outils d'interface de NeoBase. NeoBase ne l'ouvre que si elle est signée.
 const HTML = "<div class=\"appWrap\">\n      <div class=\"agHead\"><span class=\"label\">Journal</span><span class=\"hint\" id=\"jrStats\"></span><div class=\"agNav\"><button class=\"btn px\" id=\"jrToday\">AUJOURD'HUI</button></div></div>\n      <div class=\"jrMain\">\n        <div class=\"sysCard px jrSide\"><div class=\"jrNav\"><button class=\"btn px\" id=\"jrPrev\" title=\"Mois précédent\">&lt;</button><span id=\"jrMonthName\"></span><button class=\"btn px\" id=\"jrNext\" title=\"Mois suivant\">&gt;</button></div>\n          <div id=\"jrCal\"></div><div class=\"hint\">Les jours écrits sont marqués, de la couleur de ton humeur.</div></div>\n        <div class=\"sysCard px jrPage\"><div id=\"jrDate\"></div><div class=\"jrMoodRow\"><span class=\"label\">Humeur</span><div id=\"jrMoods\"></div></div>\n          <textarea id=\"jrText\" placeholder=\"Comment s'est passée ta journée ?\"></textarea><div class=\"hint\" id=\"jrWords\"></div></div>\n      </div>\n    </div>";
+/*CSS-MOVED*/ const CSS = `.jrMain{display:grid;grid-template-columns:340px 1fr;gap:20px;align-items:start}
+.jrNav{display:flex;align-items:center;gap:10px}
+.jrNav span{flex:1;text-align:center;color:#fff;font-size:17px;text-transform:capitalize}
+.jrNav .btn{height:34px;font:10px var(--title);padding:0 10px}
+#jrCal{display:grid;grid-template-columns:repeat(7,1fr);gap:4px}
+.jrDow{font:7px var(--title);color:var(--muted);text-align:center;padding:4px 0}
+.jrCell{all:unset;cursor:var(--cp,pointer);aspect-ratio:1;display:grid;place-items:center;font-size:14px;color:var(--lilac);background:rgba(255,255,255,.03);position:relative}
+.jrCell:hover{background:rgba(255,255,255,.08)}
+.jrCell.out{opacity:.35}
+.jrCell.today{color:#fff;box-shadow:inset 0 0 0 2px var(--line2)}
+.jrCell.on{background:rgba(var(--mgr),.25);color:#fff;box-shadow:inset 0 0 0 2px var(--magenta)}
+.jrCell.has::after{content:"";position:absolute;bottom:5px;width:6px;height:6px;background:var(--mc,var(--pink))}
+.jrPage{min-height:520px}
+#jrDate{font:600 22px var(--text);color:#fff;text-transform:capitalize}
+.jrMoodRow{display:flex;align-items:center;gap:14px}
+#jrMoods{display:flex;gap:6px}
+.jrMood{all:unset;cursor:var(--cp,pointer);padding:6px;color:var(--muted);box-shadow:inset 0 0 0 2px transparent}
+.jrMood:hover{color:var(--mc)}
+.jrMood.on{color:var(--mc);box-shadow:inset 0 0 0 2px var(--mc)}
+#jrText{all:unset;flex:1;min-height:380px;font:17px/1.6 var(--text);color:var(--lilac);white-space:pre-wrap;word-break:break-word;overflow-y:auto}
+#jrText::placeholder{color:var(--ph)}
+`;  // le style de ce plugin (il utilise les variables du thème de NeoBase)
 export default async function (ctx) {
   const view = ctx.view;
   if (!ctx.host) { view.textContent = "Ce plugin doit être approuvé par NeoBase pour s'ouvrir."; return; }
   const host = ctx.host, { el, toast, sfx, ask, newTab, pixIcon, PIX, WX } = host;
   const folder = ctx.folder, legacy = ctx.legacy || {};
+  ctx.host.addStyle(CSS);
   view.innerHTML = HTML;
   const $ = id => id === "journalApp" ? view : (view.querySelector('#' + id) || document.getElementById(id));  // les identifiants de ta vue d'abord, puis ceux de la page (fenêtres, menus)
   const doc = async n => { try { return await folder.read(n); } catch { return null; } };
