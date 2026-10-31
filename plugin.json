@@ -1,0 +1,19 @@
+{
+  "id": "neobase.journal",
+  "name": "Journal",
+  "version": "1.0.0",
+  "author": "NDesumeur",
+  "description": "Une page par jour : ce que tu as vécu, ton humeur de 1 à 5, et tes anciennes pages.",
+  "icon": "icon.png",
+  "entry": "index.js",
+  "view": "journal",
+  "neobase": ">=4.0.0",
+  "type": "app",
+  "category": "Outils",
+  "mobile": false,
+  "system": false,
+  "dependencies": {},
+  "permissions": [
+    "full"
+  ]
+}
