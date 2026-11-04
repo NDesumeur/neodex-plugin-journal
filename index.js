@@ -1,6 +1,6 @@
 // Journal : ton appli d'origine (HTML et code inchangés), livrée en plugin.
-// Ses données sont dans le dossier du plugin, que NeoBase sauvegarde (synchro cloud et sauvegardes) ; à la première ouverture elle reprend ce que tu avais dans NeoBase.
-// Elle tourne dans le bac à sable de NeoBase, avec ses outils d'interface (ctx.host) et seulement les autorisations de son plugin.json.
+// Ses données sont dans le dossier du plugin, que NeoDex sauvegarde (synchro cloud et sauvegardes) ; à la première ouverture elle reprend ce que tu avais dans NeoDex.
+// Elle tourne dans le bac à sable de NeoDex, avec ses outils d'interface (ctx.host) et seulement les autorisations de son plugin.json.
 const HTML = "<div class=\"appWrap\">\n      <div class=\"agHead\"><span class=\"label\">Journal</span><span class=\"hint\" id=\"jrStats\"></span><div class=\"agNav\"><button class=\"btn px\" id=\"jrToday\">AUJOURD'HUI</button></div></div>\n      <div class=\"jrMain\">\n        <div class=\"sysCard px jrSide\"><div class=\"jrNav\"><button class=\"btn px\" id=\"jrPrev\" title=\"Mois précédent\">&lt;</button><span id=\"jrMonthName\"></span><button class=\"btn px\" id=\"jrNext\" title=\"Mois suivant\">&gt;</button></div>\n          <div id=\"jrCal\"></div><div class=\"hint\">Les jours écrits sont marqués, de la couleur de ton humeur.</div></div>\n        <div class=\"sysCard px jrPage\"><div id=\"jrDate\"></div><div class=\"jrMoodRow\"><span class=\"label\">Humeur</span><div id=\"jrMoods\"></div></div>\n          <textarea id=\"jrText\" placeholder=\"Comment s'est passée ta journée ?\"></textarea><div class=\"hint\" id=\"jrWords\"></div></div>\n      </div>\n    </div>";
 /*CSS-MOVED*/ const CSS = `.jrMain{display:grid;grid-template-columns:340px 1fr;gap:20px;align-items:start}
 .jrNav{display:flex;align-items:center;gap:10px}
@@ -23,10 +23,10 @@ const HTML = "<div class=\"appWrap\">\n      <div class=\"agHead\"><span class=\
 .jrMood.on{color:var(--mc);box-shadow:inset 0 0 0 2px var(--mc)}
 #jrText{all:unset;flex:1;min-height:380px;font:17px/1.6 var(--text);color:var(--lilac);white-space:pre-wrap;word-break:break-word;overflow-y:auto}
 #jrText::placeholder{color:var(--ph)}
-`;  // le style de ce plugin (il utilise les variables du thème de NeoBase)
+`;  // le style de ce plugin (il utilise les variables du thème de NeoDex)
 export default async function (ctx) {
   const view = ctx.view;
-  if (!ctx.host) { view.textContent = "Ce plugin doit être approuvé par NeoBase pour s'ouvrir."; return; }
+  if (!ctx.host) { view.textContent = "Ce plugin doit être approuvé par NeoDex pour s'ouvrir."; return; }
   const host = ctx.host, { el, toast, sfx, ask, newTab, pixIcon, PIX, WX } = host;
   const folder = ctx.folder, legacy = ctx.legacy || {};
   ctx.host.addStyle(CSS);
