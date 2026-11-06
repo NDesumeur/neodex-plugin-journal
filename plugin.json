@@ -1,7 +1,7 @@
 {
   "id": "neodex.journal",
   "name": "Journal",
-  "version": "1.1.0",
+  "version": "1.1.1",
   "author": "NDesumeur",
   "description": "Une page par jour : ce que tu as vécu, ton humeur de 1 à 5, et tes anciennes pages.",
   "icon": "icon.png",
