@@ -23,6 +23,26 @@ const HTML = "<div class=\"appWrap\">\n      <div class=\"agHead\"><span class=\
 .jrMood.on{color:var(--mc);box-shadow:inset 0 0 0 2px var(--mc)}
 #jrText{all:unset;flex:1;min-height:380px;font:17px/1.6 var(--text);color:var(--lilac);white-space:pre-wrap;word-break:break-word;overflow-y:auto}
 #jrText::placeholder{color:var(--ph)}
+/* le journal en carnet de papier pixel art : page lignée à marge rouge, calendrier de bureau à spirale */
+.jrPage,.jrSide{--c:#1b1230;position:relative;box-shadow:0 -3px 0 0 #1b1230,0 3px 0 0 #1b1230,-3px 0 0 0 #1b1230,3px 0 0 0 #1b1230,8px 8px 0 2px rgba(0,0,0,.4)}
+.jrPage{--fill:linear-gradient(90deg,transparent 50px,#e0707f 50px 53px,transparent 53px),url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='32' height='32' shape-rendering='crispEdges' fill='%23e4d6b0'%3E%3Crect x='3' y='5' width='1' height='1'/%3E%3Crect x='19' y='2' width='2' height='1'/%3E%3Crect x='27' y='13' width='1' height='1'/%3E%3Crect x='9' y='21' width='1' height='2'/%3E%3Crect x='23' y='26' width='1' height='1'/%3E%3Crect x='14' y='12' width='1' height='1'/%3E%3C/svg%3E"),#f3e9cf;padding-left:72px}
+.jrPage::before{content:'';position:absolute;left:16px;top:24px;bottom:24px;width:18px;background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='18' height='64' shape-rendering='crispEdges'%3E%3Cpath fill='%231b1230' d='M6 4h6v2h2v6h-2v2H6v-2H4V6h2z'/%3E%3C/svg%3E") repeat-y}
+#jrDate{color:#2b2350}
+.jrPage .label{color:#8a7c5a}
+.jrPage .hint{color:#5a4f7a}
+.jrMood{color:#9a8c6c} .jrMood.on{background:#fff6e0}
+#jrText{color:#2b2350;font-size:19px;line-height:32px;background:repeating-linear-gradient(to bottom,transparent 0 30px,#a9bde0 30px 32px);background-attachment:local}
+#jrText::placeholder{color:#b0a27c}
+.jrSide{--fill:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='32' height='32' shape-rendering='crispEdges' fill='%23e4d6b0'%3E%3Crect x='3' y='5' width='1' height='1'/%3E%3Crect x='19' y='2' width='2' height='1'/%3E%3Crect x='27' y='13' width='1' height='1'/%3E%3Crect x='9' y='21' width='1' height='2'/%3E%3Crect x='23' y='26' width='1' height='1'/%3E%3Crect x='14' y='12' width='1' height='1'/%3E%3C/svg%3E"),#f3e9cf;margin-top:14px;padding-top:28px}
+.jrSide::before{content:'';position:absolute;top:-12px;left:18px;right:18px;height:22px;background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='28' height='22' shape-rendering='crispEdges'%3E%3Cpath fill='%231b1230' d='M10 0h8v2h2v12h-2v2h-8v-2H8V2h2z'/%3E%3Cpath fill='%23c8ccec' d='M12 2h4v2h2v8h-2v2h-4v-2h-2V4h2z'/%3E%3Cpath fill='%23ffffff' d='M12 2h2v2h-2z'/%3E%3Cpath fill='%231b1230' d='M11 16h6v4h-6z'/%3E%3C/svg%3E") repeat-x}
+.jrNav{background:#e0707f;margin:-10px -12px 6px;padding:6px 8px;box-shadow:inset 0 -3px 0 #b04a5a}
+.jrNav span{color:#fff;text-shadow:2px 2px 0 #7a2a3a}
+.jrDow{color:#8a7c5a}
+.jrCell{color:#2b2350;background:#fbf3dd;box-shadow:inset 0 -2px 0 #ddcfa8}
+.jrCell:hover{background:#fff}
+.jrCell.today{color:#2b2350;box-shadow:inset 0 0 0 2px #2b2350}
+.jrCell.on{background:#ffd8f2;color:#2b2350;box-shadow:inset 0 0 0 3px #b0288c}
+.jrSide .hint{color:#5a4f7a}
 `;  // le style de ce plugin (il utilise les variables du thème de NeoDex)
 export default async function (ctx) {
   const view = ctx.view;
