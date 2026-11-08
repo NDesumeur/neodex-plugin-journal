@@ -3,7 +3,7 @@
   "name": "Journal",
   "version": "1.1.2",
   "author": "NDesumeur",
-  "description": "Une page par jour : ce que tu as vécu, ton humeur de 1 à 5, et tes anciennes pages.",
+  "description": "Un journal intime, une page par jour enregistrée pendant que tu écris, avec ton humeur de 1 à 5. Un calendrier montre les jours écrits de la couleur de ton humeur ; clique un jour pour relire ou compléter sa page. Jours écrits ce mois-ci, total et série de jours d'affilée ; tout reste dans NeoDex et ta synchro.",
   "icon": "icon.png",
   "entry": "index.js",
   "view": "journal",
