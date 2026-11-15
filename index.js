@@ -1,27 +1,28 @@
 // Journal : ton appli d'origine (HTML et code inchangés), livrée en plugin.
 // Ses données sont dans le dossier du plugin, que NeoDex sauvegarde (synchro cloud et sauvegardes) ; à la première ouverture elle reprend ce que tu avais dans NeoDex.
 // Elle tourne dans le bac à sable de NeoDex, avec ses outils d'interface (ctx.host) et seulement les autorisations de son plugin.json.
-const HTML = "<div class=\"appWrap\">\n      <div class=\"agHead\"><span class=\"label\">Journal</span><span class=\"hint\" id=\"jrStats\"></span><div class=\"agNav\"><button class=\"btn px\" id=\"jrToday\">AUJOURD'HUI</button></div></div>\n      <div class=\"jrMain\">\n        <div class=\"sysCard px jrSide\"><div class=\"jrNav\"><button class=\"btn px\" id=\"jrPrev\" title=\"Mois précédent\">&lt;</button><span id=\"jrMonthName\"></span><button class=\"btn px\" id=\"jrNext\" title=\"Mois suivant\">&gt;</button></div>\n          <div id=\"jrCal\"></div><div class=\"hint\">Les jours écrits sont marqués, de la couleur de ton humeur.</div></div>\n        <div class=\"sysCard px jrPage\"><div id=\"jrDate\"></div><div class=\"jrMoodRow\"><span class=\"label\">Humeur</span><div id=\"jrMoods\"></div></div>\n          <textarea id=\"jrText\" placeholder=\"Comment s'est passée ta journée ?\"></textarea><div class=\"hint\" id=\"jrWords\"></div></div>\n      </div>\n    </div>";
-/*CSS-MOVED*/ const CSS = `.jrMain{display:grid;grid-template-columns:340px 1fr;gap:20px;align-items:start}
+const HTML = "<div class=\"appWrap wide\">\n      <div class=\"agHead\"><span class=\"label\">Journal</span><span class=\"hint\" id=\"jrStats\"></span><div class=\"agNav\"><button class=\"btn px\" id=\"jrToday\">AUJOURD'HUI</button></div></div>\n      <div class=\"jrMain\">\n        <div class=\"sysCard px jrSide\"><div class=\"jrNav\"><button class=\"btn px\" id=\"jrPrev\" title=\"Mois précédent\">&lt;</button><span id=\"jrMonthName\"></span><button class=\"btn px\" id=\"jrNext\" title=\"Mois suivant\">&gt;</button></div>\n          <div id=\"jrCal\"></div><div class=\"hint\">Les jours écrits sont marqués, de la couleur de ton humeur.</div></div>\n        <div class=\"sysCard px jrPage\"><div id=\"jrDate\"></div><div class=\"jrMoodRow\"><span class=\"label\">Humeur</span><div id=\"jrMoods\"></div></div>\n          <textarea id=\"jrText\" placeholder=\"Comment s'est passée ta journée ?\"></textarea><div class=\"hint\" id=\"jrWords\"></div></div>\n      </div>\n    </div>";
+/*CSS-MOVED*/ const CSS = `.jrMain{display:grid;grid-template-columns:clamp(280px,25vw,430px) minmax(0,1fr);gap:clamp(16px,1.6vw,28px);align-items:start}
+@media (max-width:820px){.jrMain{grid-template-columns:minmax(0,1fr)}.jrSide{max-width:440px}}
 .jrNav{display:flex;align-items:center;gap:10px}
-.jrNav span{flex:1;text-align:center;color:#fff;font-size:17px;text-transform:capitalize}
-.jrNav .btn{height:34px;font:10px var(--title);padding:0 10px}
+.jrNav span{flex:1;text-align:center;color:#fff;font-size:clamp(17px,1.3vw,22px);text-transform:capitalize}
+.jrNav .btn{height:36px;font:12px var(--title);padding:0 10px}
 #jrCal{display:grid;grid-template-columns:repeat(7,1fr);gap:4px}
-.jrDow{font:7px var(--title);color:var(--muted);text-align:center;padding:4px 0}
-.jrCell{all:unset;cursor:var(--cp,pointer);aspect-ratio:1;display:grid;place-items:center;font-size:14px;color:var(--lilac);background:rgba(255,255,255,.03);position:relative}
+.jrDow{font:10px var(--title);color:var(--muted);text-align:center;padding:4px 0}
+.jrCell{all:unset;cursor:var(--cp,pointer);aspect-ratio:1;display:grid;place-items:center;font-size:clamp(14px,1.1vw,19px);color:var(--lilac);background:rgba(255,255,255,.03);position:relative}
 .jrCell:hover{background:rgba(255,255,255,.08)}
 .jrCell.out{opacity:.35}
 .jrCell.today{color:#fff;box-shadow:inset 0 0 0 2px var(--line2)}
 .jrCell.on{background:rgba(var(--mgr),.25);color:#fff;box-shadow:inset 0 0 0 2px var(--magenta)}
 .jrCell.has::after{content:"";position:absolute;bottom:5px;width:6px;height:6px;background:var(--mc,var(--pink))}
-.jrPage{min-height:520px}
-#jrDate{font:600 22px var(--text);color:#fff;text-transform:capitalize}
+.jrPage{min-height:clamp(420px,calc(100vh - 190px),1100px);box-sizing:border-box}
+#jrDate{font:600 clamp(22px,1.8vw,30px) var(--text);color:#fff;text-transform:capitalize}
 .jrMoodRow{display:flex;align-items:center;gap:14px}
 #jrMoods{display:flex;gap:6px}
 .jrMood{all:unset;cursor:var(--cp,pointer);padding:6px;color:var(--muted);box-shadow:inset 0 0 0 2px transparent}
 .jrMood:hover{color:var(--mc)}
 .jrMood.on{color:var(--mc);box-shadow:inset 0 0 0 2px var(--mc)}
-#jrText{all:unset;flex:1;min-height:380px;font:17px/1.6 var(--text);color:var(--lilac);white-space:pre-wrap;word-break:break-word;overflow-y:auto}
+#jrText{all:unset;flex:1;min-height:clamp(260px,calc(100vh - 380px),900px);font:17px/1.6 var(--text);color:var(--lilac);white-space:pre-wrap;word-break:break-word;overflow-y:auto}
 #jrText::placeholder{color:var(--ph)}
 /* le journal en carnet de papier pixel art : page lignée à marge rouge, calendrier de bureau à spirale */
 .jrPage,.jrSide{--c:#1b1230;position:relative;box-shadow:0 -3px 0 0 #1b1230,0 3px 0 0 #1b1230,-3px 0 0 0 #1b1230,3px 0 0 0 #1b1230,8px 8px 0 2px rgba(0,0,0,.4)}
@@ -31,7 +32,7 @@ const HTML = "<div class=\"appWrap\">\n      <div class=\"agHead\"><span class=\
 .jrPage .label{color:#8a7c5a}
 .jrPage .hint{color:#5a4f7a}
 .jrMood{color:#9a8c6c} .jrMood.on{background:#fff6e0}
-#jrText{color:#2b2350;font-size:19px;line-height:32px;background:repeating-linear-gradient(to bottom,transparent 0 30px,#a9bde0 30px 32px);background-attachment:local}
+#jrText{color:#2b2350;font-size:20px;line-height:32px;background:repeating-linear-gradient(to bottom,transparent 0 30px,#a9bde0 30px 32px);background-attachment:local}
 #jrText::placeholder{color:#b0a27c}
 .jrSide{--fill:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='32' height='32' shape-rendering='crispEdges' fill='%23e4d6b0'%3E%3Crect x='3' y='5' width='1' height='1'/%3E%3Crect x='19' y='2' width='2' height='1'/%3E%3Crect x='27' y='13' width='1' height='1'/%3E%3Crect x='9' y='21' width='1' height='2'/%3E%3Crect x='23' y='26' width='1' height='1'/%3E%3Crect x='14' y='12' width='1' height='1'/%3E%3C/svg%3E"),#f3e9cf;margin-top:14px;padding-top:28px}
 .jrSide::before{content:'';position:absolute;top:-12px;left:18px;right:18px;height:22px;background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='28' height='22' shape-rendering='crispEdges'%3E%3Cpath fill='%231b1230' d='M10 0h8v2h2v12h-2v2h-8v-2H8V2h2z'/%3E%3Cpath fill='%23c8ccec' d='M12 2h4v2h2v8h-2v2h-4v-2h-2V4h2z'/%3E%3Cpath fill='%23ffffff' d='M12 2h2v2h-2z'/%3E%3Cpath fill='%231b1230' d='M11 16h6v4h-6z'/%3E%3C/svg%3E") repeat-x}

@@ -28,3 +28,5 @@ Your pages and moods are stored by NeoDex, backed up and synced between your PCs
 In NeoDex: **NeoStore → Discover → Journal → Install**.
 
 Building a plugin: see the [NeoDex SDK](https://github.com/NDesumeur/neodex-sdk).
+
+

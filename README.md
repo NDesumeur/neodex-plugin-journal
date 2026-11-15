@@ -28,3 +28,5 @@ Tes pages et tes humeurs sont enregistrées par NeoDex, sauvegardées et synchro
 Dans NeoDex : **NeoStore → À découvrir → Journal → Installer**.
 
 Développer un plugin : voir le [SDK NeoDex](https://github.com/NDesumeur/neodex-sdk).
+
+
