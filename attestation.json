@@ -1,9 +1,9 @@
 {
   "pluginId": "neodex.journal",
   "repo": "NDesumeur/neodex-plugin-journal",
-  "version": "1.1.5",
-  "sha256": "90a59d44080adf637c47f3b9484816483a002acaacf17348d55a1747ae0dbf4b",
-  "approvedAt": "2026-11-16T04:14:36.641Z",
+  "version": "1.1.6",
+  "sha256": "f3d1522a755592c82a0a943d04831757d36dceba45702e33e11d9e073d420eca",
+  "approvedAt": "2026-11-19T19:54:26.411Z",
   "neobase": ">=4.0.0",
-  "signature": "KwKrNzMNoxKIO3EJIh5N9k67lAFFrTM4QVelJ84anNog6NuJGqfumnbGbOuKTDwd0ndMaXet2GPVtG6UFTCUAQ=="
+  "signature": "WzAvLK1xNv2nO33ZHUNZCnrgKyWkVsSgubNhAe6imCUMBvq0Wn6yW8bcsL3teJHyre9BQrOzxctff+6IlwfCDg=="
 }
