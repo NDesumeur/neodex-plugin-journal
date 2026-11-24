@@ -1,8 +1,11 @@
 // Journal : ton appli d'origine (HTML et code inchangés), livrée en plugin.
 // Ses données sont dans le dossier du plugin, que NeoDex sauvegarde (synchro cloud et sauvegardes) ; à la première ouverture elle reprend ce que tu avais dans NeoDex.
 // Elle tourne dans le bac à sable de NeoDex, avec ses outils d'interface (ctx.host) et seulement les autorisations de son plugin.json.
-const HTML = "<div class=\"appWrap wide\">\n      <div class=\"agHead\"><span class=\"label\">Journal</span><span class=\"hint\" id=\"jrStats\"></span><div class=\"agNav\"><button class=\"btn px\" id=\"jrToday\">AUJOURD'HUI</button></div></div>\n      <div class=\"jrMain\">\n        <div class=\"sysCard px jrSide\"><div class=\"jrNav\"><button class=\"btn px\" id=\"jrPrev\" title=\"Mois précédent\">&lt;</button><span id=\"jrMonthName\"></span><button class=\"btn px\" id=\"jrNext\" title=\"Mois suivant\">&gt;</button></div>\n          <div id=\"jrCal\"></div><div class=\"hint\">Les jours écrits sont marqués, de la couleur de ton humeur.</div></div>\n        <div class=\"sysCard px jrPage\"><div id=\"jrDate\"></div><div class=\"jrMoodRow\"><span class=\"label\">Humeur</span><div id=\"jrMoods\"></div></div>\n          <textarea id=\"jrText\" placeholder=\"Comment s'est passée ta journée ?\"></textarea><div class=\"hint\" id=\"jrWords\"></div></div>\n      </div>\n    </div>";
-/*CSS-MOVED*/ const CSS = `.jrMain{display:grid;grid-template-columns:clamp(280px,25vw,430px) minmax(0,1fr);gap:clamp(16px,1.6vw,28px);align-items:start}
+const HTML = "<div class=\"appWrap wide\">\n      <div class=\"agHead\"><span class=\"label\">Journal</span><span class=\"hint\" id=\"jrStats\"></span><div class=\"agNav\"><button class=\"btn px\" id=\"jrToday\">AUJOURD'HUI</button></div></div>\n      <div class=\"jrMain\">\n        <div class=\"sysCard px jrSide\"><div class=\"jrNav\"><button class=\"btn px\" id=\"jrPrev\" title=\"Mois précédent\">&lt;</button><span id=\"jrMonthName\"></span><button class=\"btn px\" id=\"jrNext\" title=\"Mois suivant\">&gt;</button></div>\n          <div id=\"jrCal\"></div><div class=\"hint\">Les jours écrits sont marqués, de la couleur de ton humeur.</div></div>\n        <div class=\"sysCard px jrPage\"><div id=\"jrDate\"></div><div class=\"jrMoodRow\"><span class=\"label\">Humeur</span><div id=\"jrMoods\"></div></div>\n          <textarea id=\"jrText\" placeholder=\"Comment s'est passée ta journée ?\"></textarea><div class=\"hint\" id=\"jrWords\"></div><div id=\"jrAsk\" class=\"jrAsk\"></div><div id=\"jrMem\"></div></div>\n      </div>\n    </div>";
+/*CSS-MOVED*/ const CSS = `.jrAsk{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-top:8px}.jrAsk .q{flex:1;min-width:200px;color:#6b4f8c;font-style:italic}
+.jrMemBox{margin-top:14px;display:flex;flex-direction:column;gap:8px}.jrMemItem{all:unset;cursor:var(--cp,pointer);display:flex;gap:12px;align-items:flex-start;padding:10px 12px;background:rgba(80,40,120,.07);border-left:4px solid var(--mc,#9a8cc8)}
+.jrMemItem:hover{background:rgba(80,40,120,.14)}.jrMemItem b{display:block;color:#2a1a40;margin-bottom:2px}.jrMemItem span{color:#4a3a60;font-size:14px;white-space:pre-wrap;overflow-wrap:anywhere}
+.jrMain{display:grid;grid-template-columns:clamp(280px,25vw,430px) minmax(0,1fr);gap:clamp(16px,1.6vw,28px);align-items:start}
 @media (max-width:820px){.jrMain{grid-template-columns:minmax(0,1fr)}.jrSide{max-width:440px}}
 .jrNav{display:flex;align-items:center;gap:10px}
 .jrNav span{flex:1;text-align:center;color:#fff;font-size:clamp(17px,1.3vw,22px);text-transform:capitalize}
@@ -77,6 +80,18 @@ PIX.mood5 = ['.#####.', '#.....#', '#.#.#.#', '#.....#', '#.#.#.#', '#.###.#', '
 const saveJournal = () => { clearTimeout(jrTimer); jrTimer = setTimeout(() => { jrTimer = null; api('journal', journal).catch(e => toast('Sauvegarde du journal impossible : ' + e.message, true)); }, 600); };
 addEventListener('pagehide', () => { if (jrTimer) folder.write('journal', journal); });
 api('journal').then(d => { journal = d?.entries ? d : {entries: {}}; if (view.classList.contains('on')) jrRender(); }).catch(e => toast('Journal indisponible : ' + e.message, true));
+// les questions du jour : une par date (toujours la même ce jour-là), une autre au clic
+const JR_ASK = ['Qu\'est-ce qui t\'a fait sourire aujourd\'hui ?', 'Pour quoi es-tu reconnaissant aujourd\'hui ?', 'Qu\'as-tu appris aujourd\'hui ?', 'Quel moment voudrais-tu revivre ?', 'Qu\'est-ce qui t\'a pris le plus d\'énergie ?', 'À qui as-tu pensé aujourd\'hui ?', 'Qu\'aimerais-tu faire demain ?', 'Quelle petite victoire as-tu eue ?', 'Qu\'est-ce qui t\'a surpris ?', 'Comment te sens-tu en ce moment, en trois mots ?', 'Qu\'as-tu mangé de bon ?', 'Qu\'est-ce que tu as écouté, lu ou regardé ?', 'Qu\'as-tu fait pour toi aujourd\'hui ?', 'Qu\'est-ce qui t\'a rendu fier ?', 'Qu\'aurais-tu fait autrement ?', 'Quelle conversation t\'a marqué ?', 'Où étais-tu au plus beau moment de la journée ?', 'Qu\'est-ce qui t\'inquiète, et que peux-tu y faire ?', 'Qu\'attends-tu avec impatience ?', 'Quelle chose simple t\'a fait du bien ?', 'Quelle couleur aurait ta journée, et pourquoi ?', 'Qu\'as-tu remarqué que tu ne voyais pas avant ?', 'Qui t\'a aidé, ou qui as-tu aidé ?', 'Quelle phrase résume ta journée ?'];
+const jrAskOf = (day, k = 0) => { let h = k * 7; for (const c of day) h = (h * 31 + c.charCodeAt(0)) >>> 0; return JR_ASK[h % JR_ASK.length]; };
+let jrAskK = 0;
+// ce jour-là : les pages écrites à la même date les années d'avant (le 29 février revient le 28 les autres années)
+function jrMemories(day) {
+  const md = day.slice(5), y = +day.slice(0, 4), out = [];
+  for (const [k, e] of Object.entries(journal.entries)) { if (!e.text?.trim()) continue; const ky = +k.slice(0, 4); if (ky >= y) continue;
+    if (k.slice(5) === md || (md === '02-28' && k.slice(5) === '02-29')) out.push([k, e, y - ky]); }
+  return out.sort((a, b) => a[2] - b[2]);
+}
+console.assert((() => { const j = journal; journal = {entries: {'2024-02-29': {text: 'a'}, '2025-02-28': {text: 'b'}, '2025-03-01': {text: 'c'}, '2023-02-28': {text: ''}}}; const r = jrMemories('2026-02-28').map(x => x[0] + x[2]).join(); journal = j; return r === '2025-02-281,2024-02-292'; })(), 'journal : ce jour-là');
 function jrStreak() {  // days in a row with something written, up to today (or yesterday if today is still empty)
   let n = 0, d = new Date();
   if (!journal.entries[ymd(d)]?.text?.trim()) d = addDays(d, -1);
@@ -106,6 +121,17 @@ function jrRender() {
   }));
   if (document.activeElement !== $('jrText')) $('jrText').value = en.text || '';
   jrCount();
+  // la question du jour, et « ce jour-là »
+  const q = jrAskOf(jrDay, jrAskK), qb = el('button', 'btn px', 'ÉCRIRE LÀ-DESSUS'), qn = el('button', 'btn px', '↻'); qn.title = 'Une autre question';
+  qb.onclick = () => { const t = $('jrText'); t.value = (t.value.trim() ? t.value.replace(/\s*$/, '\n\n') : '') + q + '\n'; t.dispatchEvent(new Event('input')); t.focus(); t.setSelectionRange(t.value.length, t.value.length); };
+  qn.onclick = () => { jrAskK++; jrRender(); };
+  $('jrAsk').replaceChildren(el('span', 'q', q), qb, qn);
+  const mem = jrMemories(jrDay), mb = el('div', 'jrMemBox');
+  if (mem.length) { mb.append(el('span', 'label', 'Ce jour-là')); for (const [k, e, n] of mem) { const b = el('button', 'jrMemItem'), txt = e.text.trim(); if (e.mood) b.style.setProperty('--mc', JR_MOODS[e.mood - 1][2]);
+    const t = el('div'); t.append(el('b', '', n === 1 ? 'Il y a un an' : n + ' ans plus tôt'), el('span', '', txt.length > 280 ? txt.slice(0, 280) + '…' : txt));
+    if (e.mood) { const f = el('span'); f.innerHTML = pixIcon(PIX['mood' + e.mood], 3); f.title = JR_MOODS[e.mood - 1][1]; b.append(f); }
+    b.append(t); b.title = 'Ouvrir cette page'; b.onclick = () => { jrDay = k; jrMonth = k.slice(0, 7); jrRender(); }; mb.append(b); } }
+  $('jrMem').replaceChildren(mb);
 }
 const jrCount = () => { const n = ($('jrText').value.match(/\S+/g) || []).length; $('jrWords').textContent = n + ' mot' + (n > 1 ? 's' : '') + (journal.entries[jrDay]?.t ? ' · modifié à ' + new Date(journal.entries[jrDay].t).toLocaleTimeString('fr-FR', {hour: '2-digit', minute: '2-digit'}) : ''); };
 $('jrText').oninput = () => { const e = journal.entries[jrDay] ||= {text: '', mood: 0, t: 0}; e.text = $('jrText').value; e.t = Date.now(); saveJournal(); jrCount(); };
